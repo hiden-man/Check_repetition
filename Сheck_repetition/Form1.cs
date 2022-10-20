@@ -7,8 +7,8 @@ namespace Сheck_repetition
     public partial class Form1 : Form
     {
         string[] strArrayWords = { "elder", "ypypy", "dersten", "red", "duck", "dark", "yellow", "blue", "true" };
-        string clearStr;
-        int numbItem = 0,ter = 0;
+        string strNumberOfItem;
+        byte step = 0;
         public Form1(){InitializeComponent();}
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -34,80 +34,67 @@ namespace Сheck_repetition
         private void button2_Click(object sender, EventArgs e){ Close();}
         public void Xxtyr()
         {
-            string str;
+            step = 0;
+            strNumberOfItem = "";
+            string str, str2 = "";
             str = textBox1.Text;
             string[] strArray = str.Split(' ');
-            int x = strArray.Length;
-            clearStr = "";
-            numbItem = 0;
-            for (int i = 0; i < x; i++)
+            // цикл для списку слів який вводимо в текстове поле
+            for (int i = 0; i < strArray.Length; i++)
             {
-            //NextWor:
+                // цикл для списку слів з яким перевіряємо на повтор перший список
                 for (int j = 0; j < strArrayWords.Length; j++)
                 {
-                    // якщо останнє слово в текстбоксі співпадає зі словом в списку то видає помилку вихід за межі масиву
+                    // якщо слова співпадають то йде запис номеру позиції слова в списку
                     if (strArray[i] == strArrayWords[j])
                     {
-                        if (numbItem == 0)
+                        if (step == 0)
                         {
-                            clearStr = strArray[i];
-                            numbItem++;
+                            // запис першої позиції
+                            strNumberOfItem = i.ToString();
+                            step++;
                         }
                         else
-                            clearStr += ", "+strArray[i];
-
-                        //i++;
-                        //numbItem++;
-                        //goto NextWor;
-                    }
-                }
-                //if (numbItem == 0)
-                //    clearStr = strArray[i];
-                //if(numbItem > 0)
-                //    clearStr += " "+strArray[i];
-                //if (i == x+1)
-                //{
-                //    break;
-                //}
-
-                //richTextBox2.Text += "\n"+ter++;
-            }
-            if (numbItem > 0)
-            {
-                DialogResult result = MessageBox.Show(
-                    $"Такі слова вже є в списку:\n{clearStr}\nВідмінити зберігання слів?",
-                    "Увага",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-                if (result == DialogResult.No)
-                {
-                    foreach (string newStr in strArray)
-                    {
-                        richTextBox1.Text += $"\n{newStr}";
+                        {
+                            // запис інших позицій
+                            strNumberOfItem += $",{i}";
+                            step = 1;
+                        }
                     }
                 }
             }
-            else 
+            // створення текствого масиву номерів позицій слів у списку
+            string[] strNumberOfPositionOfWord = strNumberOfItem.Split(',');
+            int[] intPosition = new int[strNumberOfPositionOfWord.Length];
+            for (int n = 0; n < strNumberOfPositionOfWord.Length; n++)
+                intPosition[n] = Convert.ToInt32(strNumberOfPositionOfWord[n]);
+            int stepForIndex = 0, stepForIndex2 = 0;
+            for (int q = 0; q < strArray.Length; q++)
             {
-                string checkInSpace = textBox1.Text;
-                if (checkInSpace[0] != ' ')
+                if (q == intPosition[stepForIndex])
                 {
-                    foreach (string newStr in strArray)
-                    {
-                        richTextBox1.Text += $"\n{newStr}";
-                    }
+                    stepForIndex++;
+                    continue;
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Видаліть пробіл на початку текстового поля!",
-                        "Увага",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    if (stepForIndex2 == 0)
+                    {
+                        str2 = strArray[q];
+                        stepForIndex2++;
+                    }
+                    else
+                        str2 += $" {strArray[q]}";
+                }
+                if (q == strArray.Length)
+                {
+                    break;
                 }
             }
-            //textBox1.Text = clearStr;
+            richTextBox2.Text = strNumberOfItem;
+            richTextBox2.Text += "\n"+str2;
         }
+
 
         [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
         private extern static void ReleaseCapture();

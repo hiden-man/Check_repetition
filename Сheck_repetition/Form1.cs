@@ -7,8 +7,6 @@ namespace Сheck_repetition
     public partial class Form1 : Form
     {
         string[] strArrayWords = { "elder", "ypypy", "dersten", "red", "duck", "dark", "yellow", "blue", "true" };
-        string strNumberOfItem;
-        byte step = 0;
         public Form1(){InitializeComponent();}
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -30,15 +28,18 @@ namespace Сheck_repetition
                 return cp;
             }
         }
-        private void button1_Click(object sender, EventArgs e){ Xxtyr();}
+        private void button1_Click(object sender, EventArgs e){ CheakList(); }
         private void button2_Click(object sender, EventArgs e){ Close();}
+        /*
         public void Xxtyr()
         {
-            step = 0;
-            strNumberOfItem = "";
-            string str, str2 = "";
+            // незакінчений метод
+            byte step = 0;
+            string strNumberOfItem = "";
+            string str, strText2, str2 = "", str3 = "";
             str = textBox1.Text;
-            string[] strArray = str.Split(' ');
+            strText2 = textBox2.Text;
+            string[] strArray = str.Split(' '), strArray2 = strText2.Split(' ');
             // цикл для списку слів який вводимо в текстове поле
             for (int i = 0; i < strArray.Length; i++)
             {
@@ -63,6 +64,7 @@ namespace Сheck_repetition
                     }
                 }
             }
+
             // створення текствого масиву номерів позицій слів у списку
             string[] strNumberOfPositionOfWord = strNumberOfItem.Split(',');
             int[] intPosition = new int[strNumberOfPositionOfWord.Length];
@@ -71,7 +73,39 @@ namespace Сheck_repetition
             int stepForIndex = 0, stepForIndex2 = 0;
             for (int q = 0; q < strArray.Length; q++)
             {
-                if (q == intPosition[stepForIndex])
+                if (q == intPosition[stepForIndex]) // вихід за межу масиву " intPosition "
+                {
+                    if (stepForIndex < intPosition.Length)
+                    {
+                        stepForIndex++;
+                        continue;
+                    }
+                    else
+                        stepForIndex = intPosition.Length-1;
+                }
+                else if (q != intPosition[stepForIndex])
+                {
+                    if (stepForIndex2 == 0)
+                    {
+                        str2 = strArray[q];
+                        stepForIndex2++;
+                    }
+                    else
+                        str2 += $"\n{strArray[q]}";
+                }
+                else if (q == strArray.Length)
+                {
+                    break;
+                }
+            }
+            //richTextBox2.Text = strNumberOfItem;
+            richTextBox2.Text += str2;
+            //------------------------------------------------------------
+            stepForIndex = 0;
+            stepForIndex2 = 0;
+            for (int f = 0; f < strArray2.Length; f++)
+            {
+                if (f == intPosition[stepForIndex])
                 {
                     stepForIndex++;
                     continue;
@@ -80,19 +114,61 @@ namespace Сheck_repetition
                 {
                     if (stepForIndex2 == 0)
                     {
-                        str2 = strArray[q];
+                        str3 = strArray2[f];
                         stepForIndex2++;
                     }
                     else
-                        str2 += $" {strArray[q]}";
+                        str3 += $" {strArray2[f]}";
                 }
-                if (q == strArray.Length)
+                if (f == strArray2.Length)
                 {
                     break;
                 }
             }
-            richTextBox2.Text = strNumberOfItem;
-            richTextBox2.Text += "\n"+str2;
+            textBox2.Text = str3;
+        }
+        */
+
+        public void CheakList() // зробити сповіщення через меседжбокс
+        {
+            byte step = 0;
+            string clearStr = "", clearStr2 = "", numberOfItems = "";
+            string str, strText2;
+            int w = 0;
+            str = textBox1.Text;
+            strText2 = textBox2.Text;
+            string[] strArray = str.Split(' '), strArray2 = strText2.Split(' ');
+            // цикл для списку слів який вводимо в текстове поле
+            for (int i = 0; i < strArray.Length; i++)
+            {
+                // цикл для списку слів з яким перевіряємо на повтор перший список
+                for (int j = 0; j < strArrayWords.Length; j++)
+                {
+                    // якщо слова співпадають то йде запис номеру позиції слова в списку
+                    if (strArray[i] == strArrayWords[j])
+                    {
+                        if (step == 0)
+                        {
+                            // запис першого слова
+                            clearStr = strArray[i];
+                            clearStr2 = strArray2[i];
+                            step++;
+                        }
+                        else
+                        {
+                            // запис інших слів
+                            clearStr += $", {strArray[i]}";
+                            clearStr2 += $", {strArray2[i]}";
+                            step = 1;
+                        }
+                    }
+                }
+            }
+            DialogResult resoult = MessageBox.Show(
+                $"Cлова які повторюються: {clearStr}\nПереклад: {clearStr2}\nВидаліть їх буль-ласка",
+                "Увага",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
         }
 
 
